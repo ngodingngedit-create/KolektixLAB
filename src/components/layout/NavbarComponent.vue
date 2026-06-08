@@ -82,7 +82,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { PhoneIcon, LayoutGridIcon, UserIcon, MailIcon } from 'lucide-vue-next'
 import { useSidebar } from '@/composables/useSidebar'
 
-const { isCollapsed, isMobileOpen, toggleMobile, closeMobile } = useSidebar()
+const { isCollapsed, isMobileOpen, toggleMobile, closeMobile, isSupportOpen } = useSidebar()
 
 // Reactive right offset: follows sidebar collapse & window resize
 const isMobile = ref(false)
@@ -93,7 +93,8 @@ function updateMobile() {
 
 const navbarRight = computed(() => {
   if (isMobile.value) return '0px'
-  return isCollapsed.value ? '64px' : '220px'
+  if (isCollapsed.value) return '64px'
+  return isSupportOpen.value ? '265px' : '220px'
 })
 
 const isScrolled = ref(false)

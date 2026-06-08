@@ -11,7 +11,11 @@
   <!-- Sidebar Panel -->
   <aside
     class="sidebar-panel"
-    :class="{ 'is-collapsed': isCollapsed, 'is-open': isMobileOpen }"
+    :class="{
+      'is-collapsed': isCollapsed,
+      'is-open': isMobileOpen,
+      'is-support-open': isSupportOpen && !isCollapsed
+    }"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
     id="app-sidebar"
@@ -19,6 +23,7 @@
   >
     <!-- Nav Items -->
     <nav class="sidebar-nav" role="navigation">
+      <!-- Regular menu items -->
       <RouterLink
         v-for="item in menuItems"
         :key="item.to"
@@ -40,6 +45,57 @@
         <!-- Tooltip when collapsed (desktop) -->
         <span v-if="isCollapsed" class="item-tooltip">{{ item.label }}</span>
       </RouterLink>
+
+      <!-- ── Technical Support Accordion ── -->
+      <div class="support-accordion" :class="{ 'is-open': isSupportOpen }">
+        <!-- Accordion trigger -->
+        <button
+          class="sidebar-item support-trigger"
+          :class="{ 'is-support-active': isSupportOpen }"
+          @click="toggleSupport"
+          id="support-trigger-btn"
+          :aria-expanded="isSupportOpen"
+        >
+          <span class="active-indicator"></span>
+          <span class="item-icon">
+            <HeadphonesIcon :size="20" />
+          </span>
+          <Transition name="fade-label">
+            <span v-show="!isCollapsed" class="item-label">
+              {{ currentLocale === 'en' ? 'Tech Support' : 'Technical Support' }}
+            </span>
+          </Transition>
+          <Transition name="fade-label">
+            <span v-show="!isCollapsed" class="support-chevron" :class="{ 'is-open': isSupportOpen }">
+              <ChevronDownIcon :size="14" />
+            </span>
+          </Transition>
+          <!-- Tooltip when collapsed -->
+          <span v-if="isCollapsed" class="item-tooltip">
+            {{ currentLocale === 'en' ? 'Tech Support' : 'Technical Support' }}
+          </span>
+        </button>
+
+        <!-- Submenu list -->
+        <div class="support-submenu" :style="submenuStyle">
+          <div class="support-submenu-inner" ref="submenuInner">
+            <a
+              v-for="sub in supportSubmenus"
+              :key="sub.id"
+              :href="sub.waLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="support-subitem"
+              @click="closeMobile"
+            >
+              <span class="subitem-icon">
+                <component :is="sub.icon" :size="15" />
+              </span>
+              <span class="subitem-label">{{ sub.label }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </nav>
 
     <!-- Spacer -->
@@ -77,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   HomeIcon,
@@ -86,13 +142,135 @@ import {
   UserIcon,
   MailIcon,
   ChevronRightIcon,
+  ChevronDownIcon,
+  HeadphonesIcon,
+  BugIcon,
+  KeyRoundIcon,
+  LightbulbIcon,
+  ServerIcon,
+  MessageSquareIcon,
 } from 'lucide-vue-next'
 import { useSidebar } from '@/composables/useSidebar'
 
 const route = useRoute()
-const { isCollapsed, isMobileOpen, toggle, toggleMobile, closeMobile } = useSidebar()
+const { isCollapsed, isMobileOpen, toggle, toggleMobile, closeMobile, isSupportOpen } = useSidebar()
 
 const currentLocale = ref(localStorage.getItem('kolektix_lang') || 'id')
+const submenuInner = ref(null)
+const submenuHeight = ref(0)
+
+const WA_NUMBER = '6281234567890'
+
+function buildWaLink(message) {
+  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`
+}
+
+const waMessages = {
+  bug: `Halo Tim Support,
+
+Saya ingin melaporkan bug pada aplikasi.
+
+Nama Perusahaan:
+Nama PIC:
+
+Deskripsi Masalah:`,
+
+  login: `Halo Tim Support,
+
+Saya mengalami kendala login.
+
+Nama Perusahaan:
+Email Akun:
+
+Pesan Error:`,
+
+  feature: `Halo Tim Support,
+
+Saya ingin mengajukan permintaan fitur baru.
+
+Nama Perusahaan:
+Nama PIC:
+
+Deskripsi Kebutuhan:`,
+
+  maintenance: `Halo Tim Support,
+
+Saya membutuhkan bantuan terkait maintenance server.
+
+Nama Perusahaan:
+Nama PIC:
+
+Detail Kendala:`,
+
+  konsultasi: `Halo Tim Support,
+
+Saya ingin melakukan konsultasi teknis.
+
+Nama Perusahaan:
+Nama PIC:
+
+Topik Konsultasi:`,
+}
+
+const supportSubmenus = computed(() => [
+  {
+    id: 'bug',
+    label: currentLocale.value === 'en' ? 'App Bug Report' : 'Bug Aplikasi',
+    icon: BugIcon,
+    waLink: buildWaLink(waMessages.bug),
+  },
+  {
+    id: 'login',
+    label: currentLocale.value === 'en' ? 'Login Issues' : 'Kendala Login',
+    icon: KeyRoundIcon,
+    waLink: buildWaLink(waMessages.login),
+  },
+  {
+    id: 'feature',
+    label: currentLocale.value === 'en' ? 'Feature Request' : 'Permintaan Fitur',
+    icon: LightbulbIcon,
+    waLink: buildWaLink(waMessages.feature),
+  },
+  {
+    id: 'maintenance',
+    label: currentLocale.value === 'en' ? 'Server Maintenance' : 'Maintenance Server',
+    icon: ServerIcon,
+    waLink: buildWaLink(waMessages.maintenance),
+  },
+  {
+    id: 'konsultasi',
+    label: currentLocale.value === 'en' ? 'Technical Consult' : 'Konsultasi Teknis',
+    icon: MessageSquareIcon,
+    waLink: buildWaLink(waMessages.konsultasi),
+  },
+])
+
+// Dynamic max-height for smooth accordion animation
+const submenuStyle = computed(() => ({
+  maxHeight: isSupportOpen.value ? `${submenuHeight.value}px` : '0px',
+}))
+
+async function toggleSupport() {
+  // If sidebar is collapsed on desktop, expand it first then open accordion
+  if (isCollapsed.value && window.innerWidth > 900) {
+    isCollapsed.value = false
+    await nextTick()
+    await new Promise(r => setTimeout(r, 50))
+  }
+  isSupportOpen.value = !isSupportOpen.value
+  await nextTick()
+  if (submenuInner.value) {
+    submenuHeight.value = submenuInner.value.scrollHeight
+  }
+}
+
+// Recalculate height after mount
+async function measureSubmenu() {
+  await nextTick()
+  if (submenuInner.value) {
+    submenuHeight.value = submenuInner.value.scrollHeight
+  }
+}
 
 const menuItems = computed(() => {
   if (currentLocale.value === 'en') {
@@ -126,11 +304,14 @@ const onMouseEnter = () => {
 const onMouseLeave = () => {
   if (window.innerWidth > 900) {
     isCollapsed.value = true
+    // Close accordion when sidebar collapses on desktop
+    isSupportOpen.value = false
   }
 }
 
 onMounted(() => {
   window.addEventListener('kolektix-lang-change', onLangChange)
+  measureSubmenu()
 })
 
 onUnmounted(() => {
@@ -138,6 +319,12 @@ onUnmounted(() => {
 })
 
 watch(() => route.path, closeMobile)
+
+// Re-measure on locale change (labels might change width)
+watch(currentLocale, async () => {
+  await nextTick()
+  measureSubmenu()
+})
 </script>
 
 <style scoped>
@@ -175,6 +362,31 @@ watch(() => route.path, closeMobile)
   width: var(--sb-col-width);
 }
 
+/*
+  When accordion is open:
+  – widen sidebar so "Technical Support" + chevron fit fully
+  – let the panel scroll vertically instead of the inner nav,
+    so ALL submenu items are always visible without inner scrolling
+*/
+.sidebar-panel.is-support-open {
+  width: 265px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-panel.is-support-open .sidebar-nav {
+  overflow-y: visible;
+  flex: none;
+}
+
+.sidebar-panel.is-support-open .sidebar-spacer {
+  display: none;
+}
+
+/* Custom scrollbar on panel when accordion open */
+.sidebar-panel.is-support-open::-webkit-scrollbar { width: 3px; }
+.sidebar-panel.is-support-open::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 2px; }
+
 /* ── Nav ─────────────────────────────────────────────────── */
 .sidebar-nav {
   display: flex;
@@ -206,6 +418,13 @@ watch(() => route.path, closeMobile)
   overflow: hidden;
   cursor: pointer;
   min-height: 52px;
+  width: 100%;
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  font-family: inherit;
 }
 
 .sidebar-item:hover {
@@ -323,6 +542,101 @@ watch(() => route.path, closeMobile)
   min-height: 8px;
 }
 
+/* ─────────────────────────────────────────────────────────
+   Technical Support Accordion
+   ───────────────────────────────────────────────────────── */
+.support-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Trigger button inherits .sidebar-item + extra styles */
+.support-trigger {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.support-trigger.is-support-active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* Chevron indicator */
+.support-chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.5);
+  transition: transform var(--sb-transition), color var(--sb-transition);
+}
+
+.support-chevron.is-open {
+  transform: rotate(180deg);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Collapsed: hide chevron */
+.sidebar-panel.is-collapsed .support-chevron {
+  display: none;
+}
+
+/* Submenu wrapper — animated via max-height */
+.support-submenu {
+  overflow: hidden;
+  transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Hidden when sidebar is collapsed */
+.sidebar-panel.is-collapsed .support-submenu {
+  max-height: 0 !important;
+}
+
+/* Subitem */
+.support-subitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 20px 11px 28px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background var(--sb-transition), color var(--sb-transition), padding var(--sb-transition);
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.support-subitem:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.support-subitem:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+  padding-left: 32px;
+}
+
+.subitem-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color var(--sb-transition);
+}
+
+.support-subitem:hover .subitem-icon {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.subitem-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Collapse Button ─────────────────────────────────────── */
 .collapse-btn {
   display: none;
@@ -435,6 +749,43 @@ watch(() => route.path, closeMobile)
   .sidebar-panel .item-label {
     display: block !important;
     opacity: 1 !important;
+  }
+
+  /* Support accordion mobile */
+  .support-trigger {
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    padding: 14px 20px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .support-chevron {
+    display: flex !important;
+  }
+
+  .support-subitem {
+    padding: 10px 20px 10px 28px;
+    font-size: 0.82rem;
+  }
+
+  .support-subitem:hover {
+    padding-left: 32px;
+  }
+
+  /* Mobile accordion open: keep 220px width but allow panel to scroll */
+  .sidebar-panel.is-support-open {
+    width: 220px !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .sidebar-panel.is-support-open .sidebar-nav {
+    overflow-y: visible;
+    flex: none;
+  }
+
+  .sidebar-panel.is-support-open .sidebar-spacer {
+    display: none;
   }
 
   .collapse-btn { display: none; }

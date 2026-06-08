@@ -29,10 +29,13 @@ import SidebarComponent from './components/layout/SidebarComponent.vue'
 import MobileNavbarComponent from './components/layout/MobileNavbarComponent.vue'
 import { useSidebar } from '@/composables/useSidebar'
 
-const { isCollapsed } = useSidebar()
+const { isCollapsed, isSupportOpen } = useSidebar()
 
-// Dynamic margin based on collapsed state
-const bodyMargin = computed(() => isCollapsed.value ? '64px' : '220px')
+// Dynamic margin based on collapsed state and support accordion state
+const bodyMargin = computed(() => {
+  if (isCollapsed.value) return '64px'
+  return isSupportOpen.value ? '265px' : '220px'
+})
 </script>
 
 <style>

@@ -3,10 +3,14 @@ import { ref } from 'vue'
 // Module-level = singleton shared across all components
 const isCollapsed = ref(true)
 const isMobileOpen = ref(false)
+const isSupportOpen = ref(false)
 
 export function useSidebar() {
   function toggle() {
     isCollapsed.value = !isCollapsed.value
+    if (isCollapsed.value) {
+      isSupportOpen.value = false
+    }
   }
 
   function toggleMobile() {
@@ -19,5 +23,5 @@ export function useSidebar() {
     document.body.style.overflow = ''
   }
 
-  return { isCollapsed, isMobileOpen, toggle, toggleMobile, closeMobile }
+  return { isCollapsed, isMobileOpen, isSupportOpen, toggle, toggleMobile, closeMobile }
 }
