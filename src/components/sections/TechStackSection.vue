@@ -41,6 +41,12 @@
             class="tech-card"
             :title="tech.name"
           >
+            <!-- Badge -->
+            <div v-if="tech.badge" class="service-featured-badge">
+              <StarIcon :size="10" />
+              <span>{{ t('services.mostPopular') }}</span>
+            </div>
+
             <div class="tech-card-inner">
               <div class="tech-logo">
                 <img :src="tech.logo" :alt="tech.name" class="tech-logo-img" />
@@ -76,8 +82,10 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { CpuIcon, CodeIcon, CloudIcon, DatabaseIcon, ShieldCheckIcon, AwardIcon, MonitorIcon } from 'lucide-vue-next'
+import { CpuIcon, CodeIcon, CloudIcon, DatabaseIcon, ShieldCheckIcon, AwardIcon, MonitorIcon, StarIcon } from 'lucide-vue-next'
+import { useI18n } from '@/composables/useI18n'
 
+const { t } = useI18n()
 const activeCategory = ref('frontend')
 
 const categories = [
@@ -90,31 +98,32 @@ const categories = [
 
 const techs = [
   // Frontend
-  { category: 'frontend', name: 'Vue.js', logo: '/keahlian/frontend/FE (3).jpg', role: 'Progressive Framework' },
+  { category: 'frontend', name: 'Vue.js', logo: '/keahlian/frontend/FE (3).jpg', role: 'Progressive Framework', badge: 'popular' },
   { category: 'frontend', name: 'React.js', logo: '/keahlian/frontend/FE (5).jpg', role: 'UI Library' },
   { category: 'frontend', name: 'Angular', logo: '/keahlian/frontend/FE (4).jpg', role: 'Enterprise Framework' },
   { category: 'frontend', name: 'Next.js', logo: '/keahlian/frontend/FE (2).jpg', role: 'React Framework' },
   { category: 'frontend', name: 'Flutter', logo: '/keahlian/frontend/FE (1).jpg', role: 'Cross-platform Mobile' },
   // Backend
+  { category: 'backend', name: 'Python', logo: '/keahlian/backend/BE (4).jpg', role: 'AI/ML & APIs' },
   { category: 'backend', name: 'Node.js', logo: '/keahlian/backend/BE (6).jpg', role: 'Server Runtime' },
   { category: 'backend', name: 'Java', logo: '/keahlian/backend/BE (5).jpg', role: 'Enterprise Backend' },
   { category: 'backend', name: 'PHP', logo: '/keahlian/backend/BE (3).jpg', role: 'Web Backend' },
   { category: 'backend', name: '.NET', logo: '/keahlian/backend/BE (2).jpg', role: 'Microsoft Platform' },
-  { category: 'backend', name: 'Python', logo: '/keahlian/backend/BE (4).jpg', role: 'AI/ML & APIs' },
-  { category: 'backend', name: 'Go', logo: '/keahlian/backend/BE (1).jpg', role: 'High Performance' },
+  { category: 'backend', name: 'Go', logo: '/keahlian/backend/BE (1).jpg', role: 'High Performance', badge: 'fast' },
   // Cloud
-  { category: 'cloud', name: 'AWS', logo: '/keahlian/cloud/cloud (4).jpg', role: 'Cloud Platform' },
+  { category: 'cloud', name: 'AWS', logo: '/keahlian/cloud/cloud (4).jpg', role: 'Cloud Platform', badge: 'recommended' },
   { category: 'cloud', name: 'Google Cloud', logo: '/keahlian/cloud/cloud (1).jpg', role: 'Cloud Platform' },
   { category: 'cloud', name: 'Azure', logo: '/keahlian/cloud/cloud (3).jpg', role: 'Microsoft Cloud' },
   { category: 'cloud', name: 'Docker', logo: '/keahlian/cloud/cloud (2).jpg', role: 'Containerization' },
   { category: 'cloud', name: 'Kubernetes', logo: '/keahlian/cloud/cloud (5).jpg', role: 'Orchestration' },
   // Database
-  { category: 'database', name: 'PostgreSQL', logo: '/keahlian/database/DB (2).jpg', role: 'Relational DB' },
+  { category: 'database', name: 'PostgreSQL', logo: '/keahlian/database/DB (2).jpg', role: 'Relational DB', badge: 'recommended' },
   { category: 'database', name: 'MySQL', logo: '/keahlian/database/DB (1).jpg', role: 'Relational DB' },
   // Enterprise
-  { category: 'enterprise', name: 'SAP', logo: '/keahlian/enterprise/enterprise (2).jpg', role: 'ERP Platform' },
-  { category: 'enterprise', name: 'iOS', logo: '/keahlian/enterprise/enterprise (3).jpg', role: 'Apple Platform' },
+  { category: 'enterprise', name: 'Website Development', logo: '/keahlian/enterprise/web_dev_logo.png', role: 'Web Applications' },
   { category: 'enterprise', name: 'Android', logo: '/keahlian/enterprise/enterprise (1).jpg', role: 'Google Platform' },
+  { category: 'enterprise', name: 'iOS', logo: '/keahlian/enterprise/enterprise (3).jpg', role: 'Apple Platform' },
+  { category: 'enterprise', name: 'SAP', logo: '/keahlian/enterprise/enterprise (2).jpg', role: 'ERP Platform', badge: 'erp' },
 ]
 
 const certifications = [
@@ -181,11 +190,35 @@ const filteredTechs = computed(() =>
 }
 
 .tech-card {
+  position: relative;
   border-radius: var(--radius-md);
   background: var(--white);
   box-shadow: var(--shadow-sm);
   border: 1px solid transparent;
   transition: all var(--transition-base);
+}
+
+.service-featured-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.65rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(25, 78, 158, 0.08);
+  pointer-events: none;
+  z-index: 10;
+  transition: all var(--transition-base);
+}
+
+.service-featured-badge svg {
+  flex-shrink: 0;
 }
 
 .tech-card:hover {
@@ -321,6 +354,18 @@ const filteredTechs = computed(() =>
 
 @media (max-width: 768px) {
   .tech-grid { grid-template-columns: repeat(3, 1fr); }
+  .service-featured-badge {
+    top: 6px;
+    right: 6px;
+    padding: 2px 6px;
+    font-size: 0.58rem;
+    gap: 2px;
+  }
+  .service-featured-badge :deep(svg),
+  .service-featured-badge svg {
+    width: 8px !important;
+    height: 8px !important;
+  }
   .tech-tabs {
     gap: 6px;
     flex-wrap: nowrap;
@@ -346,6 +391,19 @@ const filteredTechs = computed(() =>
   .tech-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+  }
+  .service-featured-badge {
+    top: 5px;
+    right: 5px;
+    padding: 1px 4.5px;
+    font-size: 0.52rem;
+    gap: 1px;
+    box-shadow: 0 1px 3px rgba(25, 78, 158, 0.05);
+  }
+  .service-featured-badge :deep(svg),
+  .service-featured-badge svg {
+    width: 7px !important;
+    height: 7px !important;
   }
   .tech-card-inner {
     padding: 16px 12px;
