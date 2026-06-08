@@ -210,9 +210,9 @@ const serviceOptions = [
 const budgetOptions = ['< Rp 50 Juta', 'Rp 50–200 Juta', 'Rp 200–500 Juta', '> Rp 500 Juta']
 
 const contactMethods = [
-  { icon: MailIcon, label: 'Email', value: 'hello@kolektixlab.com', href: 'mailto:hello@kolektixlab.com', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
+  { icon: MailIcon, label: 'Email', value: 'kolektixlab@gmail.com', href: 'mailto:kolektixlab@gmail.com', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
   { icon: PhoneIcon, label: 'Telepon', value: '+62 21 5001 2345', href: 'tel:+62215001234', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
-  { icon: BuildingIcon, label: 'Kantor Pusat', value: 'Jl. Sudirman Kav 52-53, Jakarta Selatan', href: '#', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
+  { icon: BuildingIcon, label: 'Kantor Pusat', value: 'Perumahan Diamond Valley Blok A2/1, Sawangan, Depok ', href: '#', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
 ]
 
 const socials = [
