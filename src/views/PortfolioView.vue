@@ -336,6 +336,28 @@ const filteredProjects = computed(() =>
   .portfolio-card.featured { grid-column: span 2; }
 }
 
+@media (max-width: 768px) {
+  .portfolio-filters {
+    gap: 6px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 4px 16px 12px;
+    margin-left: -16px;
+    margin-right: -16px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .portfolio-filters::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-btn {
+    padding: 7px 14px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+}
+
 @media (max-width: 640px) {
   .portfolio-grid {
     grid-template-columns: 1fr;

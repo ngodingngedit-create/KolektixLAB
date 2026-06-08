@@ -36,17 +36,42 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { LayoutGridIcon, UserIcon, MailIcon } from 'lucide-vue-next'
 
 const route = useRoute()
 
-const navItems = [
-  { to: '/', label: 'Home', isHome: true },
-  { to: '/layanan', label: 'Layanan', icon: LayoutGridIcon },
-  { to: '/tentang', label: 'Tentang Kami', icon: UserIcon },
-  { to: '/kontak', label: 'Kontak', icon: MailIcon },
-]
+const currentLocale = ref(localStorage.getItem('kolektix_lang') || 'id')
+
+const navItems = computed(() => {
+  if (currentLocale.value === 'en') {
+    return [
+      { to: '/', label: 'Home', isHome: true },
+      { to: '/layanan', label: 'Services', icon: LayoutGridIcon },
+      { to: '/tentang', label: 'About Us', icon: UserIcon },
+      { to: '/kontak', label: 'Contact', icon: MailIcon },
+    ]
+  }
+  return [
+    { to: '/', label: 'Home', isHome: true },
+    { to: '/layanan', label: 'Layanan', icon: LayoutGridIcon },
+    { to: '/tentang', label: 'Tentang Kami', icon: UserIcon },
+    { to: '/kontak', label: 'Kontak', icon: MailIcon },
+  ]
+})
+
+const onLangChange = (e) => {
+  currentLocale.value = e.detail
+}
+
+onMounted(() => {
+  window.addEventListener('kolektix-lang-change', onLangChange)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('kolektix-lang-change', onLangChange)
+})
 
 function isActive(to) {
   if (to === '/') {

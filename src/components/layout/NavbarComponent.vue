@@ -21,9 +21,46 @@
 
       <!-- CTA Button -->
       <div class="navbar-actions">
+        <!-- Language Switcher -->
+        <div class="lang-switcher" ref="langSwitcherRef">
+          <button
+            class="lang-trigger-btn"
+            @click="toggleLangDropdown"
+            aria-label="Switch Language"
+            aria-haspopup="listbox"
+            :aria-expanded="isLangDropdownOpen"
+          >
+            <img
+              :src="currentLocale === 'id' ? '/flags/id.svg' : '/flags/gb.svg'"
+              :alt="currentLocale === 'id' ? 'Indonesia' : 'English'"
+              class="lang-trigger-flag"
+            />
+          </button>
+          <Transition name="fade-slide">
+            <div v-if="isLangDropdownOpen" class="lang-dropdown-card">
+              <button
+                class="lang-option"
+                :class="{ active: currentLocale === 'id' }"
+                @click="setLocale('id')"
+              >
+                <img src="/flags/id.svg" alt="Indonesia" class="lang-flag-img" />
+                <span class="lang-text">Indonesia</span>
+              </button>
+              <button
+                class="lang-option"
+                :class="{ active: currentLocale === 'en' }"
+                @click="setLocale('en')"
+              >
+                <img src="/flags/gb.svg" alt="English" class="lang-flag-img" />
+                <span class="lang-text">English</span>
+              </button>
+            </div>
+          </Transition>
+        </div>
+
         <RouterLink to="/kontak" class="btn btn-primary btn-sm navbar-cta">
           <PhoneIcon :size="16" />
-          Mari Bicara
+          {{ currentLocale === 'id' ? 'Mari Bicara' : "Let's Talk" }}
         </RouterLink>
         <!-- Mobile Toggle -->
         <button
@@ -61,11 +98,42 @@ const navbarRight = computed(() => {
 
 const isScrolled = ref(false)
 
-const navLinks = [
-  { to: '/layanan',   label: 'Layanan',     icon: LayoutGridIcon },
-  { to: '/tentang',   label: 'Tentang Kami', icon: UserIcon },
-  { to: '/kontak',    label: 'Kontak',       icon: MailIcon },
-]
+// Language Switcher State
+const currentLocale = ref(localStorage.getItem('kolektix_lang') || 'id')
+const isLangDropdownOpen = ref(false)
+const langSwitcherRef = ref(null)
+
+function toggleLangDropdown() {
+  isLangDropdownOpen.value = !isLangDropdownOpen.value
+}
+
+function setLocale(locale) {
+  currentLocale.value = locale
+  localStorage.setItem('kolektix_lang', locale)
+  isLangDropdownOpen.value = false
+  window.dispatchEvent(new CustomEvent('kolektix-lang-change', { detail: locale }))
+}
+
+function handleClickOutside(event) {
+  if (langSwitcherRef.value && !langSwitcherRef.value.contains(event.target)) {
+    isLangDropdownOpen.value = false
+  }
+}
+
+const navLinks = computed(() => {
+  if (currentLocale.value === 'en') {
+    return [
+      { to: '/layanan',   label: 'Services',     icon: LayoutGridIcon },
+      { to: '/tentang',   label: 'About Us',     icon: UserIcon },
+      { to: '/kontak',    label: 'Contact',       icon: MailIcon },
+    ]
+  }
+  return [
+    { to: '/layanan',   label: 'Layanan',     icon: LayoutGridIcon },
+    { to: '/tentang',   label: 'Tentang Kami', icon: UserIcon },
+    { to: '/kontak',    label: 'Kontak',       icon: MailIcon },
+  ]
+})
 
 function handleScroll() {
   isScrolled.value = window.scrollY > 20
@@ -75,11 +143,13 @@ onMounted(() => {
   updateMobile()
   window.addEventListener('scroll', handleScroll, { passive: true })
   window.addEventListener('resize', updateMobile, { passive: true })
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('resize', updateMobile)
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -343,5 +413,103 @@ onUnmounted(() => {
   .navbar-cta {
     display: none !important;
   }
+}
+
+/* ── Language Switcher ── */
+.lang-switcher {
+  position: relative;
+}
+
+.lang-trigger-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.lang-trigger-btn:hover {
+  background: var(--bg-alt);
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+.lang-dropdown-card {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 150px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1001;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.lang-option:hover {
+  background: var(--bg-alt);
+  color: var(--primary);
+}
+
+.lang-option.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.lang-trigger-flag {
+  width: 24px;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  display: block;
+}
+
+.lang-flag-img {
+  width: 20px;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  display: block;
+}
+
+/* ── Transitions ── */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.2s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>

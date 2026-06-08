@@ -47,7 +47,7 @@
     <button
       class="collapse-btn"
       @click="toggle"
-      :title="isCollapsed ? 'Perluas' : 'Persingkat'"
+      :title="isCollapsed ? (currentLocale === 'en' ? 'Expand' : 'Perluas') : (currentLocale === 'en' ? 'Collapse' : 'Persingkat')"
       aria-label="Toggle Sidebar"
       id="sidebar-collapse-btn"
     >
@@ -55,7 +55,7 @@
         <ChevronRightIcon :size="16" />
       </span>
       <Transition name="fade-label">
-        <span v-show="!isCollapsed" class="collapse-btn-label">Persingkat</span>
+        <span v-show="!isCollapsed" class="collapse-btn-label">{{ currentLocale === 'en' ? 'Collapse' : 'Persingkat' }}</span>
       </Transition>
     </button>
 
@@ -69,13 +69,13 @@
       <span class="mobile-close-btn-icon">
         <ChevronRightIcon :size="16" />
       </span>
-      <span class="mobile-close-btn-label">Tutup Sidebar</span>
+      <span class="mobile-close-btn-label">{{ currentLocale === 'en' ? 'Close Sidebar' : 'Tutup Sidebar' }}</span>
     </button>
   </aside>
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   HomeIcon,
@@ -90,13 +90,38 @@ import { useSidebar } from '@/composables/useSidebar'
 const route = useRoute()
 const { isCollapsed, isMobileOpen, toggle, toggleMobile, closeMobile } = useSidebar()
 
-const menuItems = [
-  { to: '/',          label: 'Beranda',     icon: HomeIcon },
-  { to: '/layanan',   label: 'Layanan',     icon: LayoutGridIcon },
-  { to: '/portfolio', label: 'Studi Kasus', icon: FolderOpenIcon },
-  { to: '/tentang',   label: 'Tentang',     icon: UserIcon },
-  { to: '/kontak',    label: 'Kontak',      icon: MailIcon },
-]
+const currentLocale = ref(localStorage.getItem('kolektix_lang') || 'id')
+
+const menuItems = computed(() => {
+  if (currentLocale.value === 'en') {
+    return [
+      { to: '/',          label: 'Home',        icon: HomeIcon },
+      { to: '/layanan',   label: 'Services',    icon: LayoutGridIcon },
+      { to: '/portfolio', label: 'Case Studies',icon: FolderOpenIcon },
+      { to: '/tentang',   label: 'About Us',    icon: UserIcon },
+      { to: '/kontak',    label: 'Contact',     icon: MailIcon },
+    ]
+  }
+  return [
+    { to: '/',          label: 'Beranda',     icon: HomeIcon },
+    { to: '/layanan',   label: 'Layanan',     icon: LayoutGridIcon },
+    { to: '/portfolio', label: 'Studi Kasus', icon: FolderOpenIcon },
+    { to: '/tentang',   label: 'Tentang',     icon: UserIcon },
+    { to: '/kontak',    label: 'Kontak',      icon: MailIcon },
+  ]
+})
+
+const onLangChange = (e) => {
+  currentLocale.value = e.detail
+}
+
+onMounted(() => {
+  window.addEventListener('kolektix-lang-change', onLangChange)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('kolektix-lang-change', onLangChange)
+})
 
 watch(() => route.path, closeMobile)
 </script>
