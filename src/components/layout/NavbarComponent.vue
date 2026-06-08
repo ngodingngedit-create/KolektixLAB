@@ -311,12 +311,12 @@ onUnmounted(() => {
   }
 
   .navbar-inner {
-    height: 64px !important;
+    height: 72px !important;
     padding: 0 16px !important;
   }
 
   .navbar-logo-img {
-    height: 44px !important;
+    height: 60px !important;
   }
 
   .navbar-nav {
