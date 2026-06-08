@@ -14,7 +14,7 @@
     :class="{
       'is-collapsed': isCollapsed,
       'is-open': isMobileOpen,
-      'is-support-open': isSupportOpen && !isCollapsed
+      'is-support-open': isSupportOpen
     }"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
@@ -587,9 +587,11 @@ watch(currentLocale, async () => {
   background: rgba(0, 0, 0, 0.15);
 }
 
-/* Hidden when sidebar is collapsed */
-.sidebar-panel.is-collapsed .support-submenu {
-  max-height: 0 !important;
+/* Hidden when sidebar is collapsed (desktop only) */
+@media (min-width: 901px) {
+  .sidebar-panel.is-collapsed .support-submenu {
+    max-height: 0 !important;
+  }
 }
 
 /* Subitem */
@@ -720,7 +722,7 @@ watch(currentLocale, async () => {
 /* ── Mobile / Tablet (≤ 900px) ───────────────────────────── */
 @media (max-width: 900px) {
   .sidebar-panel {
-    width: 220px !important;
+    width: 245px !important;
     transform: translateX(100%);
     transition: transform var(--sb-transition) !important;
     z-index: 1100 !important;
@@ -772,20 +774,21 @@ watch(currentLocale, async () => {
     padding-left: 32px;
   }
 
-  /* Mobile accordion open: keep 220px width but allow panel to scroll */
+  /* Mobile accordion open: keep 245px width and prevent panel scrolling */
   .sidebar-panel.is-support-open {
-    width: 220px !important;
-    overflow-y: auto;
-    overflow-x: hidden;
+    width: 245px !important;
+    overflow-y: hidden;
   }
 
-  .sidebar-panel.is-support-open .sidebar-nav {
-    overflow-y: visible;
-    flex: none;
+  /* Hide scrollbars on mobile to prevent layout shifting and cut-off appearance */
+  .sidebar-panel,
+  .sidebar-nav {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
-
-  .sidebar-panel.is-support-open .sidebar-spacer {
-    display: none;
+  .sidebar-panel::-webkit-scrollbar,
+  .sidebar-nav::-webkit-scrollbar {
+    display: none !important;
   }
 
   .collapse-btn { display: none; }
@@ -826,6 +829,24 @@ watch(currentLocale, async () => {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+  }
+}
+</style>
+
+<style>
+/* Global overrides for sidebar scrollbars on mobile to prevent clipping and layout shifts */
+@media (max-width: 900px) {
+  #app-sidebar,
+  #app-sidebar .sidebar-nav {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  #app-sidebar::-webkit-scrollbar,
+  #app-sidebar .sidebar-nav::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
   }
 }
 </style>
