@@ -9,6 +9,9 @@ import ServicesView from './views/ServicesView.vue'
 import AboutView from './views/AboutView.vue'
 import ContactView from './views/ContactView.vue'
 import PortfolioView from './views/PortfolioView.vue'
+import PrivacyPolicyView from './views/PrivacyPolicyView.vue'
+import TermsConditionsView from './views/TermsConditionsView.vue'
+import CookiesPolicyView from './views/CookiesPolicyView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,6 +21,9 @@ const router = createRouter({
     { path: '/tentang', name: 'About', component: AboutView },
     { path: '/portfolio', name: 'Portfolio', component: PortfolioView },
     { path: '/kontak', name: 'Contact', component: ContactView },
+    { path: '/kebijakan-privasi', name: 'PrivacyPolicy', component: PrivacyPolicyView },
+    { path: '/syarat-ketentuan', name: 'TermsConditions', component: TermsConditionsView },
+    { path: '/kebijakan-cookie', name: 'CookiesPolicy', component: CookiesPolicyView },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition

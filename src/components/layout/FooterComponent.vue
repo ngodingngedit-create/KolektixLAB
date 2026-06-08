@@ -5,7 +5,7 @@
         <!-- Brand Column -->
         <div class="footer-brand">
           <RouterLink to="/" class="footer-logo">
-            <img src="/logo/white kolektixlab.png" alt="Kolektix Lab" class="footer-logo-img" />
+            <img src="/logo/white.png" alt="Kolektix Lab" class="footer-logo-img" />
           </RouterLink>
           <p class="footer-description">
             Mitra teknologi terpercaya Anda untuk konsultasi IT, pengembangan software kustom, dan solusi digital inovatif yang mendorong pertumbuhan bisnis nyata.
@@ -52,11 +52,11 @@
           &copy; {{ currentYear }} PT. KOLEKTIX MAJU BERSAMA
         </p>
         <div class="footer-legal">
-          <a href="#" class="footer-legal-link">Kebijakan Privasi</a>
+          <RouterLink to="/kebijakan-privasi" class="footer-legal-link">{{ t('footer.legal.privacy') }}</RouterLink>
           <span class="footer-legal-dot">·</span>
-          <a href="#" class="footer-legal-link">Syarat & Ketentuan</a>
+          <RouterLink to="/syarat-ketentuan" class="footer-legal-link">{{ t('footer.legal.terms') }}</RouterLink>
           <span class="footer-legal-dot">·</span>
-          <a href="#" class="footer-legal-link">Cookie Policy</a>
+          <RouterLink to="/kebijakan-cookie" class="footer-legal-link">{{ t('footer.legal.cookie') }}</RouterLink>
         </div>
       </div>
     </div>
@@ -69,6 +69,9 @@ import {
   LinkedinIcon, TwitterIcon, GithubIcon, InstagramIcon,
   ChevronRightIcon, MailIcon, SendIcon, CheckCircleIcon
 } from 'lucide-vue-next'
+import { useI18n } from '@/composables/useI18n'
+
+const { t } = useI18n()
 
 const email = ref('')
 const subscribed = ref(false)
@@ -116,20 +119,20 @@ const linkGroups = [
 
 <style scoped>
 .footer {
-  background: #0050D1;
+  background: #194E9E;
   color: var(--white);
 }
 
 /* ── Main Footer ── */
 .footer-main {
-  padding: 80px 0 48px;
+  padding: 40px 0 28px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .footer-grid {
   display: grid;
   grid-template-columns: 320px 1fr;
-  gap: 80px;
+  gap: 40px;
   align-items: start;
 }
 
@@ -138,11 +141,12 @@ const linkGroups = [
   display: flex;
   align-items: center;
   text-decoration: none;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  margin-top: -28px;
 }
 
 .footer-logo-img {
-  height: 80px;
+  height: 100px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -151,8 +155,9 @@ const linkGroups = [
 .footer-description {
   color: rgba(255,255,255,0.65);
   font-size: 0.9rem;
-  line-height: 1.75;
-  margin-bottom: 24px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  margin-top: -12px;
 }
 
 .footer-social {
@@ -161,8 +166,8 @@ const linkGroups = [
 }
 
 .social-link {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-sm);
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.1);
@@ -184,7 +189,7 @@ const linkGroups = [
 .footer-links-group {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 48px;
+  gap: 40px;
 }
 
 .footer-col-title {
@@ -194,13 +199,13 @@ const linkGroups = [
   color: var(--white);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .footer-col-links {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .footer-link {
@@ -300,7 +305,7 @@ const linkGroups = [
 
 /* ── Footer Bottom ── */
 .footer-bottom {
-  padding: 20px 0;
+  padding: 12px 0;
 }
 
 .footer-bottom-inner {
@@ -340,20 +345,29 @@ const linkGroups = [
 @media (max-width: 960px) {
   .footer-grid {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 36px;
   }
   
   .footer-links-group {
     grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    gap: 28px;
   }
 }
 
 @media (max-width: 768px) {
-  .footer-main { padding: 56px 0 40px; }
+  .footer-main { padding: 32px 0 24px; }
+  
+  .footer-logo {
+    margin-top: 0;
+  }
   
   .footer-logo-img {
-    height: 64px;
+    height: 80px;
+  }
+
+  .footer-description {
+    margin-top: 0;
+    margin-bottom: 16px;
   }
   
   .footer-bottom-inner {
@@ -371,14 +385,14 @@ const linkGroups = [
 @media (max-width: 600px) {
   .footer-links-group {
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    gap: 20px;
   }
 }
 
 @media (max-width: 400px) {
   .footer-links-group {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 16px;
   }
 }
 </style>

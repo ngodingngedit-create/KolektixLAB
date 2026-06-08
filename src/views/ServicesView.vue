@@ -4,10 +4,10 @@
     <section class="page-hero">
       <div class="container page-hero-inner">
         <h1 class="page-hero-title">
-          Layanan IT & Solusi
+          {{ t('servicesPage.heroTitle') }}
         </h1>
         <p class="page-hero-desc">
-          Solusi teknologi komprehensif yang dirancang untuk mendorong pertumbuhan bisnis Anda dari strategi hingga eksekusi dan skalabilitas penuh.
+          {{ t('servicesPage.heroDesc') }}
         </p>
       </div>
     </section>
@@ -18,10 +18,17 @@
         <div class="services-detail-grid">
           <article v-for="service in services" :key="service.title" class="service-detail-card" :id="service.id">
             <div class="sdc-visual">
-              <div class="sdc-icon-wrap" :style="{ background: service.gradient }">
-                <component :is="service.icon" :size="32" color="white" />
+              <!-- Background image -->
+              <img :src="service.image" :alt="service.title" class="sdc-bg-img" />
+              <!-- Dark overlay for legibility -->
+              <div class="sdc-overlay"></div>
+              <!-- Icon and number floating on top -->
+              <div class="sdc-visual-content">
+                <div class="sdc-icon-wrap">
+                  <component :is="service.icon" :size="32" color="white" />
+                </div>
+                <div class="sdc-number">{{ String(service.index).padStart(2, '0') }}</div>
               </div>
-              <div class="sdc-number">{{ String(service.index).padStart(2, '0') }}</div>
             </div>
             <div class="sdc-content">
               <h2 class="sdc-title">{{ service.title }}</h2>
@@ -37,19 +44,37 @@
                   </div>
                 </div>
               </div>
+              <!-- Proses Kami — accordion on mobile, always visible on desktop -->
               <div class="sdc-process">
-                <h4>Proses Kami</h4>
-                <div class="process-steps">
-                  <div v-for="(step, i) in service.process" :key="step" class="process-step">
-                    <div class="process-dot">{{ i + 1 }}</div>
-                    <span>{{ step }}</span>
+                <button
+                  class="sdc-process-header"
+                  @click="toggleProcess(service.id)"
+                  :aria-expanded="openProcess.has(service.id)"
+                >
+                  <h4>{{ t('servicesPage.processLabel') }}</h4>
+                  <ChevronDownIcon
+                    :size="16"
+                    class="sdc-process-chevron"
+                    :class="{ 'is-open': openProcess.has(service.id) }"
+                  />
+                </button>
+                <Transition name="process-expand">
+                  <div v-show="!isMobile || openProcess.has(service.id)" class="process-steps-wrap">
+                    <div class="process-steps">
+                      <div v-for="(step, i) in service.process" :key="step" class="process-step">
+                        <div class="process-dot">{{ i + 1 }}</div>
+                        <span>{{ step }}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </Transition>
               </div>
-              <RouterLink to="/kontak" class="btn btn-primary" :id="`service-cta-${service.id}`">
-                Konsultasikan Kebutuhan
-                <ArrowRightIcon :size="16" />
-              </RouterLink>
+              <div class="sdc-cta-row">
+                <RouterLink to="/kontak" class="btn btn-primary btn-sm sdc-cta-btn" :id="`service-cta-${service.id}`">
+                  {{ t('servicesPage.ctaBtn') }}
+                  <ArrowRightIcon :size="14" />
+                </RouterLink>
+              </div>
             </div>
           </article>
         </div>
@@ -61,72 +86,56 @@
 </template>
 
 <script setup>
-import { ChevronRightIcon, CheckIcon, ArrowRightIcon, CpuIcon, CodeIcon, GitMergeIcon, CloudIcon } from 'lucide-vue-next'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ChevronRightIcon, CheckIcon, ArrowRightIcon, CpuIcon, CodeIcon, GitMergeIcon, CloudIcon, ChevronDownIcon } from 'lucide-vue-next'
 import PartnerSection from '@/components/sections/PartnerSection.vue'
+import { useI18n } from '@/composables/useI18n'
 
-const services = [
-  {
-    id: 'konsultasi-it',
-    index: 1,
-    icon: CpuIcon,
-    gradient: '#0050D1',
-    title: 'Konsultasi IT Strategis',
-    description: 'Kami hadir sebagai CTO virtual Anda — membantu mengidentifikasi peluang teknologi, merancang roadmap digital yang terintegrasi dengan strategi bisnis, dan memastikan investasi teknologi Anda memberikan return yang optimal.',
-    features: [
-      { name: 'IT Assessment & Health Check', desc: 'Audit mendalam infrastruktur dan sistem yang ada' },
-      { name: 'Digital Transformation Roadmap', desc: 'Perencanaan strategis 3-5 tahun ke depan' },
-      { name: 'Technology Selection', desc: 'Evaluasi dan seleksi teknologi yang tepat' },
-      { name: 'IT Governance & Compliance', desc: 'Framework tata kelola IT yang kuat' },
-    ],
-    process: ['Discovery & Assessment', 'Analisis & Benchmarking', 'Roadmap Design', 'Implementasi & Review'],
-  },
-  {
-    id: 'pengembangan-software',
-    index: 2,
-    icon: CodeIcon,
-    gradient: '#0050D1',
-    title: 'Pengembangan Software Kustom',
-    description: 'Dari web app enterprise hingga mobile app cross-platform, kami membangun perangkat lunak yang bukan hanya berfungsi dengan baik hari ini, tetapi juga mudah dikembangkan dan dirawat di masa depan.',
-    features: [
-      { name: 'Web Application Development', desc: 'SPA, PWA, dan aplikasi web skala enterprise' },
-      { name: 'Mobile App (iOS & Android)', desc: 'Native dan cross-platform dengan Flutter/React Native' },
-      { name: 'API & Backend Services', desc: 'RESTful API, GraphQL, dan microservices architecture' },
-      { name: 'Legacy System Modernization', desc: 'Migrasi dan modernisasi sistem lama' },
-    ],
-    process: ['Requirements Analysis', 'Design & Prototyping', 'Agile Development', 'Testing & QA', 'Deployment & Support'],
-  },
-  {
-    id: 'integrasi-sistem',
-    index: 3,
-    icon: GitMergeIcon,
-    gradient: '#0050D1',
-    title: 'Integrasi Sistem',
-    description: 'Silos data dan sistem yang terpisah-pisah adalah musuh produktivitas. Kami menghubungkan semua sistem Anda menjadi ekosistem digital yang harmonis, real-time, dan efisien.',
-    features: [
-      { name: 'ERP & CRM Integration', desc: 'Integrasi SAP, Salesforce, Odoo, dan lainnya' },
-      { name: 'API Gateway & ESB', desc: 'Enterprise service bus dan API management' },
-      { name: 'Data Pipeline & ETL', desc: 'Transformasi dan pemindahan data otomatis' },
-      { name: 'Third-party Connectors', desc: 'Koneksi ke payment gateway, marketplace, dll.' },
-    ],
-    process: ['System Mapping', 'Integration Design', 'API Development', 'Testing & Validation', 'Go-Live & Monitor'],
-  },
-  {
-    id: 'cloud-devops',
-    index: 4,
-    icon: CloudIcon,
-    gradient: '#0050D1',
-    title: 'Cloud & DevOps',
-    description: 'Percepat delivery, tingkatkan reliabilitas, dan kurangi biaya operasional dengan adopsi cloud yang terencana dan praktik DevOps modern yang mengotomatiskan seluruh siklus delivery.',
-    features: [
-      { name: 'Cloud Migration & Optimization', desc: 'AWS, GCP, Azure dengan TCO optimization' },
-      { name: 'CI/CD Pipeline Automation', desc: 'Automated testing, build, dan deployment' },
-      { name: 'Infrastructure as Code', desc: 'Terraform, Ansible, dan container orchestration' },
-      { name: 'Monitoring & Observability', desc: 'Real-time monitoring, alerting, dan APM' },
-    ],
-    process: ['Cloud Assessment', 'Architecture Design', 'Migration Planning', 'Execution & Testing', 'Optimize & Scale'],
-  },
+const { t } = useI18n()
+
+// Detect mobile breakpoint
+const isMobile = ref(false)
+function checkMobile() { isMobile.value = window.innerWidth <= 768 }
+onMounted(() => { checkMobile(); window.addEventListener('resize', checkMobile) })
+onUnmounted(() => { window.removeEventListener('resize', checkMobile) })
+
+// Accordion state
+const openProcess = ref(new Set())
+function toggleProcess(id) {
+  if (openProcess.value.has(id)) {
+    openProcess.value.delete(id)
+  } else {
+    openProcess.value.add(id)
+  }
+  openProcess.value = new Set(openProcess.value)
+}
+
+const iconMap = [CpuIcon, CodeIcon, GitMergeIcon, CloudIcon]
+const imageMap = [
+  '/layanan/sdc_bg_konsultasi.png',
+  '/layanan/sdc_bg_software.png',
+  '/layanan/sdc_bg_integrasi.png',
+  '/layanan/sdc_bg_cloud.png',
 ]
+const idMap = ['konsultasi-it', 'pengembangan-software', 'integrasi-sistem', 'cloud-devops']
+
+const services = computed(() =>
+  t('servicesPage.items').map((item, i) => ({
+    id: idMap[i],
+    index: i + 1,
+    icon: iconMap[i],
+    gradient: '#0050D1',
+    image: imageMap[i],
+    title: item.title,
+    description: item.description,
+    features: item.features,
+    process: item.process,
+  }))
+)
 </script>
+
+
+
 
 <style scoped>
 /* ── Page Hero ── */
@@ -167,14 +176,15 @@ const services = [
 .service-detail-card {
   display: grid;
   grid-template-columns: 240px 1fr;
-  gap: 40px;
-  align-items: start;
-  padding: 32px;
+  gap: 0;
+  align-items: stretch;
+  padding: 0;
   background: var(--white);
   border-radius: var(--radius-xl);
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-base);
+  overflow: hidden;
 }
 
 .service-detail-card:hover {
@@ -182,30 +192,73 @@ const services = [
 }
 
 .sdc-visual {
-  position: sticky;
-  top: 100px;
+  position: relative;
+  top: 0;
+  border-radius: 0;
+  overflow: hidden;
+  min-height: 280px;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Background image fills the entire visual panel */
+.sdc-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Dark gradient overlay to ensure foreground elements stay legible */
+.sdc-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 30, 90, 0.72) 0%,
+    rgba(0, 50, 160, 0.60) 50%,
+    rgba(0, 20, 70, 0.80) 100%
+  );
+  backdrop-filter: blur(1px);
+}
+
+/* Content (icon + number) floats on top via z-index */
+.sdc-visual-content {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 16px;
+  width: 100%;
+  padding: 32px 16px;
 }
 
 .sdc-icon-wrap {
-  width: 90px;
-  height: 90px;
-  border-radius: 20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-md);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
 .sdc-number {
   font-family: var(--font-heading);
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 900;
-  color: var(--text-light);
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.02em;
 }
 
 .sdc-title {
@@ -213,6 +266,19 @@ const services = [
   font-weight: 800;
   color: var(--text-dark);
   margin-bottom: 12px;
+}
+
+.sdc-content {
+  padding: 32px 32px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sdc-cta-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }
 
 .sdc-desc {
@@ -266,6 +332,19 @@ const services = [
   margin-bottom: 20px;
 }
 
+/* Desktop: header looks like plain text label, chevron hidden */
+.sdc-process-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: default;
+  pointer-events: none;
+}
+
 .sdc-process h4 {
   font-size: 0.85rem;
   font-weight: 700;
@@ -273,6 +352,21 @@ const services = [
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 14px;
+}
+
+.sdc-process-chevron {
+  display: none;
+  color: var(--text-muted);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.sdc-process-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.process-steps-wrap {
+  overflow: hidden;
 }
 
 .process-steps {
@@ -309,36 +403,130 @@ const services = [
   justify-content: center;
 }
 
+.sdc-cta-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* Desktop: always show process steps (override v-show) */
+.process-steps-wrap {
+  display: block;
+}
+
+/* Accordion expand transition */
+.process-expand-enter-active,
+.process-expand-leave-active {
+  transition: opacity 0.25s ease, max-height 0.3s ease;
+  max-height: 300px;
+  overflow: hidden;
+}
+.process-expand-enter-from,
+.process-expand-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
 @media (max-width: 1024px) {
   .service-detail-card {
     grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 24px;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
   }
+  /* Visual banner — must stay position:relative so absolute children are contained */
   .sdc-visual {
-    position: static;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 16px;
+    position: relative;
+    height: 130px;
+    min-height: unset;
+    border-radius: 0;
+    width: 100%;
   }
-  .sdc-icon-wrap { width: 70px; height: 70px; border-radius: 16px; }
+  .sdc-visual-content {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+  }
+  .sdc-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
   .sdc-number { font-size: 2.2rem; }
+  .sdc-content { padding: 20px; }
 }
 
 @media (max-width: 768px) {
-  .service-detail-card { padding: 20px; }
-  .sdc-features { grid-template-columns: 1fr; gap: 12px; }
+  .services-detail-grid { gap: 20px; }
+  .sdc-visual { height: 120px; }
+  .sdc-visual-content { padding: 14px 16px; gap: 12px; }
+  .sdc-icon-wrap { width: 48px; height: 48px; border-radius: 11px; }
+  .sdc-number { font-size: 2rem; }
+  .sdc-content { padding: 16px; }
+  .sdc-title { font-size: 1.1rem; margin-bottom: 8px; }
+  .sdc-desc { font-size: 0.85rem; margin-bottom: 14px; }
+  .sdc-features { grid-template-columns: 1fr; gap: 10px; margin-bottom: 14px; }
+  .sdc-feat-name { font-size: 0.84rem; }
+  .sdc-feat-desc { font-size: 0.78rem; }
+
+  /* Accordion: enable interactive header */
+  .sdc-process {
+    margin-bottom: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 0 16px;
+  }
+  .sdc-process-header {
+    cursor: pointer;
+    pointer-events: auto;
+    padding: 12px 0;
+    margin-bottom: 0;
+  }
+  .sdc-process h4 {
+    margin-bottom: 0;
+    font-size: 0.8rem;
+  }
+  .sdc-process-chevron {
+    display: flex;
+  }
+  .process-steps-wrap {
+    padding-bottom: 12px;
+  }
   .process-steps {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
+    padding-top: 4px;
   }
-  .process-step:not(:last-child)::after {
-    display: none;
+  .process-step:not(:last-child)::after { display: none; }
+
+  /* CTA button: full width, centered on mobile */
+  .sdc-cta-row {
+    justify-content: stretch;
+    margin-top: 16px;
   }
-  .service-detail-card .btn {
-    padding: 10px 18px;
-    font-size: 0.82rem;
+  .sdc-cta-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 11px 20px;
+    font-size: 0.88rem;
+    border-radius: 12px;
   }
 }
+
+@media (max-width: 480px) {
+  .sdc-visual { height: 100px; }
+  .sdc-visual-content { padding: 12px 14px; gap: 10px; }
+  .sdc-icon-wrap { width: 40px; height: 40px; border-radius: 9px; }
+  .sdc-icon-wrap :deep(svg) { width: 20px; height: 20px; }
+  .sdc-number { font-size: 1.7rem; }
+  .sdc-content { padding: 14px 12px; }
+  .sdc-title { font-size: 1rem; }
+}
 </style>
+

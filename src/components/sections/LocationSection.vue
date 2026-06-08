@@ -98,7 +98,7 @@ const offices = [
   {
     type: 'hq',
     city: 'Depok',
-    address: 'Perumahan Diamond Valley Blok A2/1, Sawangan, Depok',
+    address: 'Diamond Valley Blok A2/1, Sawangan, Depok',
     phone: '+62 21 7701 2345',
     email: 'kolektixlab@gmail.com',
     mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.204558296316!2d106.82226247483808!3d-6.36785189363163!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69ec0dbde9e81b%3A0x334460f4e24ef547!2sUniversitas%20Indonesia!5e0!3m2!1sen!2sid!4v1717872000000!5m2!1sen!2sid',

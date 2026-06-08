@@ -12,6 +12,8 @@
   <aside
     class="sidebar-panel"
     :class="{ 'is-collapsed': isCollapsed, 'is-open': isMobileOpen }"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
     id="app-sidebar"
     aria-label="Side Navigation"
   >
@@ -29,7 +31,7 @@
         <span class="active-indicator"></span>
 
         <span class="item-icon">
-          <component :is="item.icon" :size="18" />
+          <component :is="item.icon" :size="20" />
         </span>
         <Transition name="fade-label">
           <span v-show="!isCollapsed" class="item-label">{{ item.label }}</span>
@@ -115,6 +117,18 @@ const onLangChange = (e) => {
   currentLocale.value = e.detail
 }
 
+const onMouseEnter = () => {
+  if (window.innerWidth > 900) {
+    isCollapsed.value = false
+  }
+}
+
+const onMouseLeave = () => {
+  if (window.innerWidth > 900) {
+    isCollapsed.value = true
+  }
+}
+
 onMounted(() => {
   window.addEventListener('kolektix-lang-change', onLangChange)
 })
@@ -129,11 +143,11 @@ watch(() => route.path, closeMobile)
 <style scoped>
 /* ── Variables ───────────────────────────────────────────── */
 .sidebar-panel {
-  --sb-width: 200px;
-  --sb-col-width: 58px;
+  --sb-width: 220px;
+  --sb-col-width: 64px;
   --sb-blue: #ffffff;
   --sb-blue-dark: rgba(255, 255, 255, 0.8);
-  --sb-bg: #0050D1;
+  --sb-bg: #194E9E;
   --sb-border: rgba(255, 255, 255, 0.15);
   --sb-text: rgba(255, 255, 255, 0.7);
   --sb-radius: 8px;
@@ -165,8 +179,8 @@ watch(() => route.path, closeMobile)
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  padding: 25px 8px 10px;
-  gap: 2px;
+  padding: 25px 0 10px;
+  gap: 0;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -180,41 +194,41 @@ watch(() => route.path, closeMobile)
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: var(--sb-radius);
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   text-decoration: none;
   color: var(--sb-text);
-  font-size: 0.83rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  transition: background var(--sb-transition), color var(--sb-transition);
+  transition: background var(--sb-transition), color var(--sb-transition), font-size var(--sb-transition), padding var(--sb-transition);
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
-  min-height: 40px;
+  min-height: 52px;
 }
 
 .sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
 /* Active — icon + text turn blue, left bar shows */
 .sidebar-item.is-active {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.05rem;
 }
 
 /* active indicator */
 .active-indicator {
   position: absolute;
   right: 0;
-  top: 20%;
-  bottom: 20%;
-  width: 3px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
   background: #ffffff;
-  border-radius: 3px 0 0 3px;
   opacity: 0;
   transition: opacity var(--sb-transition);
 }
@@ -229,14 +243,19 @@ watch(() => route.path, closeMobile)
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 22px;
+  width: 24px;
   color: inherit;
 }
 
 .item-icon :deep(svg) {
-  width: 18px;
-  height: 18px;
-  transition: width var(--sb-transition), height var(--sb-transition);
+  width: 20px;
+  height: 20px;
+  transition: width var(--sb-transition), height var(--sb-transition), transform var(--sb-transition);
+}
+
+.sidebar-item.is-active .item-icon :deep(svg) {
+  width: 22px;
+  height: 22px;
 }
 
 /* ── Label ───────────────────────────────────────────────── */
@@ -284,7 +303,7 @@ watch(() => route.path, closeMobile)
 .sidebar-panel.is-collapsed .sidebar-item {
   justify-content: center;
   gap: 0;
-  padding: 10px 0;
+  padding: 16px 0;
 }
 
 .sidebar-panel.is-collapsed .item-icon {
@@ -306,22 +325,22 @@ watch(() => route.path, closeMobile)
 
 /* ── Collapse Button ─────────────────────────────────────── */
 .collapse-btn {
-  display: flex;
+  display: none;
   align-items: center;
-  gap: 8px;
-  padding: 10px 10px;
+  gap: 12px;
+  padding: 12px 16px;
   margin: 0 8px 12px;
   border-radius: var(--sb-radius);
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.8);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--sb-transition);
   white-space: nowrap;
   overflow: hidden;
-  min-height: 38px;
+  min-height: 44px;
   width: calc(100% - 16px);
 }
 
@@ -356,7 +375,7 @@ watch(() => route.path, closeMobile)
   gap: 0;
   margin: 0 4px 12px;
   width: calc(100% - 8px);
-  padding: 10px 0;
+  padding: 12px 0;
 }
 
 /* ── Overlay ─────────────────────────────────────────────── */
@@ -387,7 +406,7 @@ watch(() => route.path, closeMobile)
 /* ── Mobile / Tablet (≤ 900px) ───────────────────────────── */
 @media (max-width: 900px) {
   .sidebar-panel {
-    width: 200px !important;
+    width: 220px !important;
     transform: translateX(100%);
     transition: transform var(--sb-transition) !important;
     z-index: 1100 !important;
@@ -400,12 +419,17 @@ watch(() => route.path, closeMobile)
   /* Reset desktop collapsed settings on mobile drawer */
   .sidebar-panel .sidebar-item {
     justify-content: flex-start !important;
-    gap: 10px !important;
-    padding: 10px 16px !important;
+    gap: 12px !important;
+    padding: 14px 20px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .sidebar-panel .sidebar-item.is-active {
+    font-size: 1.05rem !important;
   }
 
   .sidebar-panel .item-icon {
-    width: 22px !important;
+    width: 24px !important;
   }
 
   .sidebar-panel .item-label {
@@ -424,20 +448,20 @@ watch(() => route.path, closeMobile)
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
-    padding: 10px 16px;
+    gap: 12px;
+    padding: 14px 20px;
     margin: 0 8px 12px;
     border-radius: var(--sb-radius);
     border: 1px solid rgba(255, 255, 255, 0.15);
     background: rgba(255, 255, 255, 0.08);
     color: rgba(255, 255, 255, 0.8);
-    font-size: 0.78rem;
+    font-size: 0.88rem;
     font-weight: 500;
     cursor: pointer;
     transition: all var(--sb-transition);
     white-space: nowrap;
     overflow: hidden;
-    min-height: 38px;
+    min-height: 44px;
     width: calc(100% - 16px);
   }
 

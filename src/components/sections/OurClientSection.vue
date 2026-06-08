@@ -322,7 +322,7 @@ const filteredClients = computed(() =>
 .client-hover-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(14, 165, 233, 0.96);
+  background: rgba(25, 78, 158, 0.96);
   border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;

@@ -12,23 +12,22 @@
 
       <!-- Heading -->
       <h1 class="hero-heading">
-        Membangun <span class="text-accent">Solusi Digital</span><br />
-        yang Mendorong <span class="text-blue">Dampak Nyata</span>
+        {{ t('hero.heading1') }} <span class="text-accent">{{ t('hero.heading2') }}</span><br />
+        {{ t('hero.heading3') }} <span class="text-blue">{{ t('hero.heading4') }}</span>
       </h1>
 
       <!-- Description -->
       <p class="hero-desc">
-        Mitra transformasi digital Anda — dari konsultasi IT strategis hingga
-        pengembangan software enterprise yang skalabel dan siap masa depan.
+        {{ t('hero.desc') }}
       </p>
 
       <!-- CTA Buttons -->
       <div class="hero-actions">
         <RouterLink to="/layanan" class="btn-hero btn-hero-primary" id="hero-cta-services">
-          Layanan Kami
+          {{ t('hero.ctaServices') }}
         </RouterLink>
         <RouterLink to="/kontak" class="btn-hero btn-hero-outline" id="hero-cta-consult">
-          Hubungi Kami
+          {{ t('hero.ctaContact') }}
         </RouterLink>
       </div>
     </div>
@@ -36,7 +35,8 @@
 </template>
 
 <script setup>
-// No external dependencies needed for this simple hero
+import { useI18n } from '@/composables/useI18n'
+const { t } = useI18n()
 </script>
 
 <style scoped>

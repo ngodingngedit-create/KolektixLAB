@@ -4,10 +4,10 @@
     <section class="page-hero">
       <div class="container page-hero-inner">
         <h1 class="page-hero-title">
-          Portfolio & <span class="text-gradient">Studi Kasus</span>
+          {{ t('portfolio.heroTitle1') }} <span class="text-gradient">{{ t('portfolio.heroTitle2') }}</span>
         </h1>
         <p class="page-hero-desc">
-          Setiap proyek adalah cerita sukses kolaborasi. Temukan bagaimana kami membantu klien dari berbagai industri mencapai tujuan digitalnya.
+          {{ t('portfolio.heroDesc') }}
         </p>
         <!-- Filter Tabs -->
         <div class="portfolio-filters" role="tablist" aria-label="Filter Portfolio">
@@ -71,7 +71,7 @@
 
         <div style="text-align: center; margin-top: 48px;">
           <RouterLink to="/kontak" class="btn btn-primary btn-lg">
-            Diskusikan Proyek Anda
+            {{ t('portfolio.ctaBtn') }}
             <ArrowRightIcon :size="18" />
           </RouterLink>
         </div>
@@ -86,17 +86,13 @@
 import { ref, computed } from 'vue'
 import { ChevronRightIcon, ArrowRightIcon, TrendingUpIcon, TruckIcon, ShoppingCartIcon, BuildingIcon, HeartIcon, GraduationCapIcon } from 'lucide-vue-next'
 import PartnerSection from '@/components/sections/PartnerSection.vue'
+import { useI18n } from '@/composables/useI18n'
+
+const { t } = useI18n()
 
 const activeFilter = ref('all')
 
-const filters = [
-  { id: 'all', label: 'Semua' },
-  { id: 'fintech', label: 'Fintech' },
-  { id: 'logistics', label: 'Logistik' },
-  { id: 'ecommerce', label: 'E-Commerce' },
-  { id: 'banking', label: 'Perbankan' },
-  { id: 'healthcare', label: 'Kesehatan' },
-]
+const filters = computed(() => t('portfolio.filters'))
 
 const projects = [
   {

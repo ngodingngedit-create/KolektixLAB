@@ -5,11 +5,11 @@
       <div class="section-header">
         <div class="section-tag">
           <TrophyIcon :size="14" />
-          Dampak Nyata
+          {{ t('statistics.tag') }}
         </div>
         <h2 class="section-title" id="stats-title">
-          Angka yang Berbicara<br>
-          <span style="color: var(--primary);">Lebih Keras dari Kata-kata</span>
+          {{ t('statistics.title1') }}<br>
+          <span style="color: var(--primary);">{{ t('statistics.title2') }}</span>
         </h2>
         <div class="divider"></div>
       </div>
@@ -31,12 +31,12 @@
             </span>
           </div>
           <div class="stat-label-wrap">
-            <span class="stat-main-label">{{ stat.label }}</span>
-            <span class="stat-sub-label">{{ stat.sublabel }}</span>
+            <span class="stat-main-label">{{ localizedStats[statistics.indexOf(stat)].label }}</span>
+            <span class="stat-sub-label">{{ localizedStats[statistics.indexOf(stat)].sublabel }}</span>
           </div>
           <div class="stat-trend">
             <TrendingUpIcon :size="14" />
-            <span>{{ stat.trend }}</span>
+            <span>{{ localizedStats[statistics.indexOf(stat)].trend }}</span>
           </div>
         </div>
       </div>
@@ -45,51 +45,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { TrophyIcon, RocketIcon, UsersIcon, CpuIcon, ActivityIcon, TrendingUpIcon } from 'lucide-vue-next'
+import { useI18n } from '@/composables/useI18n'
+
+const { t } = useI18n()
 
 const statRefs = reactive({})
 const animatedValues = reactive({})
 const observed = reactive({})
 
 const statistics = [
-  {
-    icon: RocketIcon,
-    prefix: '',
-    suffix: '+',
-    value: 200,
-    label: 'Proyek Disampaikan',
-    sublabel: 'Across all industries',
-    trend: '+24% YoY'
-  },
-  {
-    icon: UsersIcon,
-    prefix: '',
-    suffix: '+',
-    value: 150,
-    label: 'Klien Puas',
-    sublabel: 'Active enterprise clients',
-    trend: '+18% YoY'
-  },
-  {
-    icon: CpuIcon,
-    prefix: '',
-    suffix: '+',
-    value: 80,
-    label: 'Pakar Teknologi',
-    sublabel: 'Certified professionals',
-    trend: '+30% team growth'
-  },
-  {
-    icon: ActivityIcon,
-    prefix: '',
-    suffix: '%',
-    value: 99.9,
-    label: 'Uptime Sistem',
-    sublabel: 'Guaranteed SLA',
-    trend: 'Enterprise grade'
-  },
+  { icon: RocketIcon, prefix: '', suffix: '+', value: 200, label: 'Proyek Disampaikan', sublabel: 'Across all industries', trend: '+24% YoY' },
+  { icon: UsersIcon, prefix: '', suffix: '+', value: 150, label: 'Klien Puas', sublabel: 'Active enterprise clients', trend: '+18% YoY' },
+  { icon: CpuIcon, prefix: '', suffix: '+', value: 80, label: 'Pakar Teknologi', sublabel: 'Certified professionals', trend: '+30% team growth' },
+  { icon: ActivityIcon, prefix: '', suffix: '%', value: 99.9, label: 'Uptime Sistem', sublabel: 'Guaranteed SLA', trend: 'Enterprise grade' },
 ]
+
+// Localized labels that react to language changes
+const localizedStats = computed(() => t('statistics.items'))
 
 // Initialize
 statistics.forEach(s => { animatedValues[s.label] = 0 })

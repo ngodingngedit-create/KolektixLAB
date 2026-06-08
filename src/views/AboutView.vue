@@ -5,10 +5,10 @@
       <div class="container page-hero-inner">
         
         <h1 class="page-hero-title">
-          Tentang Kolektix Lab
+          {{ t('about.heroTitle') }}
         </h1>
         <p class="page-hero-desc">
-          Kami adalah tim teknologi yang bersemangat — menggabungkan keahlian engineering terdalam dengan pemahaman bisnis yang kuat untuk menciptakan solusi digital yang benar-benar berdampak.
+          {{ t('about.heroDesc') }}
         </p>
       </div>
     </section>
@@ -18,13 +18,13 @@
         <div class="section-header">
           <div class="section-tag">
             <UsersIcon :size="14" />
-            Tim Kami
+            {{ t('about.teamTag') }}
           </div>
           <h2 class="section-title">
-            Bertemu dengan <span>Para Ahlinya</span>
+            {{ t('about.teamTitle1') }} <span>{{ t('about.teamTitle2') }}</span>
           </h2>
           <p class="section-subtitle">
-            Tim kami terdiri dari engineer, desainer, dan konsultan berpengalaman yang bersemangat membangun solusi terbaik untuk Anda.
+            {{ t('about.teamSubtitle') }}
           </p>
           <div class="divider"></div>
         </div>
@@ -53,10 +53,10 @@
         <div class="section-header">
           <div class="section-tag warm">
             <ZapIcon :size="14" />
-            Budaya Perusahaan
+            {{ t('about.cultureTag') }}
           </div>
           <h2 class="section-title">
-            Cara Kami <span>Bekerja</span>
+            {{ t('about.cultureTitle1') }} <span>{{ t('about.cultureTitle2') }}</span>
           </h2>
           <div class="divider"></div>
         </div>
@@ -82,6 +82,9 @@ import {
   ZapIcon, TargetIcon, LightbulbIcon, ShieldIcon, TrendingUpIcon
 } from 'lucide-vue-next'
 import PartnerSection from '@/components/sections/PartnerSection.vue'
+import { useI18n } from '@/composables/useI18n'
+
+const { t } = useI18n()
 
 const values = [
   { icon: TargetIcon, title: 'Berorientasi Hasil', desc: 'Setiap keputusan diambil berdasarkan dampak bisnis nyata.', color: '#0050D1', bg: 'rgba(0,80,209,0.08)' },

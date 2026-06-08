@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 // Module-level = singleton shared across all components
-const isCollapsed = ref(false)
+const isCollapsed = ref(true)
 const isMobileOpen = ref(false)
 
 export function useSidebar() {

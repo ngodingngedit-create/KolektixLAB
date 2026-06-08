@@ -5,10 +5,10 @@
       <div class="container page-hero-inner">
        
         <h1 class="page-hero-title">
-          Mari Bicara
+          {{ t('contact.heroTitle') }}
         </h1>
         <p class="page-hero-desc">
-          Ceritakan kebutuhan proyek Anda dan tim kami akan merespons dalam 24 jam dengan solusi yang tepat sasaran.
+          {{ t('contact.heroDesc') }}
         </p>
       </div>
     </section>
@@ -18,9 +18,9 @@
       <div class="container contact-inner">
         <!-- Left: Info -->
         <div class="contact-info">
-          <h2 class="contact-info-title">Hubungi Kami</h2>
+          <h2 class="contact-info-title">{{ t('contact.infoTitle') }}</h2>
           <p class="contact-info-desc">
-            Kami dengan senang hati menerima diskusi proyek, pertanyaan teknis, maupun kemitraan strategis. Pilih cara terbaik untuk terhubung:
+            {{ t('contact.infoDesc') }}
           </p>
 
           <div class="contact-methods">
@@ -40,18 +40,18 @@
           <div class="office-hours">
             <h4>
               <ClockIcon :size="16" />
-              Jam Operasional
+              {{ t('contact.hoursTitle') }}
             </h4>
             <div class="hours-list">
-              <div class="hours-row"><span>Senin – Jumat</span><span>08:00 – 18:00 WIB</span></div>
-              <div class="hours-row"><span>Sabtu</span><span>09:00 – 14:00 WIB</span></div>
-              <div class="hours-row muted"><span>Minggu & Hari Libur</span><span>Tutup</span></div>
+              <div v-for="hour in t('contact.hours')" :key="hour.day" class="hours-row" :class="{ muted: hour.time === 'Tutup' || hour.time === 'Closed' }">
+                <span>{{ hour.day }}</span><span>{{ hour.time }}</span>
+              </div>
             </div>
           </div>
 
           <!-- Social -->
           <div class="contact-social">
-            <h4>Ikuti Kami</h4>
+            <h4>{{ t('contact.followUs') }}</h4>
             <div class="social-links">
               <a v-for="s in socials" :key="s.name" :href="s.href" target="_blank" rel="noopener" class="social-btn" :title="s.name">
                 <component :is="s.icon" :size="18" />
@@ -65,21 +65,21 @@
         <div class="contact-form-wrap">
           <div class="contact-form-card">
             <div class="form-header">
-              <h3>Kirim Pesan</h3>
-              <p>Konsultasi pertama <strong>100% gratis</strong> — respons dalam 24 jam</p>
+              <h3>{{ t('contact.formTitle') }}</h3>
+              <p>{{ t('contact.formSubtitle') }} <strong>{{ t('contact.formFree') }}</strong>{{ t('contact.formReply') }}</p>
             </div>
 
             <form @submit.prevent="handleSubmit" class="contact-form" id="contact-form" novalidate>
               <div class="form-row">
                 <div class="form-group">
-                  <label for="contact-name">Nama Lengkap *</label>
+                  <label for="contact-name">{{ t('contact.labelName') }}</label>
                   <div class="input-wrap">
                     <UserIcon :size="16" class="input-icon" />
                     <input
                       id="contact-name"
                       v-model="form.name"
                       type="text"
-                      placeholder="Budi Santoso"
+                      :placeholder="t('contact.placeholderName')"
                       required
                       :class="{ error: errors.name }"
                     />
@@ -87,14 +87,14 @@
                   <span v-if="errors.name" class="field-error">{{ errors.name }}</span>
                 </div>
                 <div class="form-group">
-                  <label for="contact-email">Email Bisnis *</label>
+                  <label for="contact-email">{{ t('contact.labelEmail') }}</label>
                   <div class="input-wrap">
                     <MailIcon :size="16" class="input-icon" />
                     <input
                       id="contact-email"
                       v-model="form.email"
                       type="email"
-                      placeholder="budi@perusahaan.com"
+                      :placeholder="t('contact.placeholderEmail')"
                       required
                       :class="{ error: errors.email }"
                     />
@@ -105,27 +105,27 @@
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="contact-company">Perusahaan</label>
+                  <label for="contact-company">{{ t('contact.labelCompany') }}</label>
                   <div class="input-wrap">
                     <BuildingIcon :size="16" class="input-icon" />
-                    <input id="contact-company" v-model="form.company" type="text" placeholder="PT. Contoh Maju" />
+                    <input id="contact-company" v-model="form.company" type="text" :placeholder="t('contact.placeholderCompany')" />
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="contact-phone">Nomor Telepon</label>
+                  <label for="contact-phone">{{ t('contact.labelPhone') }}</label>
                   <div class="input-wrap">
                     <PhoneIcon :size="16" class="input-icon" />
-                    <input id="contact-phone" v-model="form.phone" type="tel" placeholder="+62 812 3456 7890" />
+                    <input id="contact-phone" v-model="form.phone" type="tel" :placeholder="t('contact.placeholderPhone')" />
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="contact-service">Layanan yang Diminati *</label>
+                <label for="contact-service">{{ t('contact.labelService') }}</label>
                 <div class="input-wrap">
                   <LayoutGridIcon :size="16" class="input-icon" />
                   <select id="contact-service" v-model="form.service" required :class="{ error: errors.service }">
-                    <option value="" disabled>Pilih layanan...</option>
+                    <option value="" disabled>{{ t('contact.placeholderService') }}</option>
                     <option v-for="opt in serviceOptions" :key="opt" :value="opt">{{ opt }}</option>
                   </select>
                 </div>
@@ -133,7 +133,7 @@
               </div>
 
               <div class="form-group">
-                <label for="contact-budget">Anggaran Proyek</label>
+                <label for="contact-budget">{{ t('contact.labelBudget') }}</label>
                 <div class="budget-options">
                   <label
                     v-for="budget in budgetOptions"
@@ -148,11 +148,11 @@
               </div>
 
               <div class="form-group">
-                <label for="contact-message">Ceritakan Kebutuhan Anda *</label>
+                <label for="contact-message">{{ t('contact.labelMessage') }}</label>
                 <textarea
                   id="contact-message"
                   v-model="form.message"
-                  placeholder="Jelaskan proyek, tantangan, atau pertanyaan Anda secara singkat..."
+                  :placeholder="t('contact.placeholderMessage')"
                   rows="5"
                   required
                   :class="{ error: errors.message }"
@@ -163,7 +163,7 @@
               <button type="submit" class="btn btn-primary btn-lg submit-btn" :disabled="isSubmitting" id="contact-submit">
                 <Loader2Icon v-if="isSubmitting" :size="18" class="spin" />
                 <SendIcon v-else :size="18" />
-                {{ isSubmitting ? 'Mengirim...' : 'Kirim Pesan' }}
+                {{ isSubmitting ? t('contact.submitting') : t('contact.submitBtn') }}
               </button>
             </form>
 
@@ -173,9 +173,9 @@
                 <div class="success-icon">
                   <CheckCircleIcon :size="48" />
                 </div>
-                <h3>Pesan Terkirim! 🎉</h3>
-                <p>Tim kami akan menghubungi Anda dalam 24 jam. Terima kasih telah mempercayai Kolektix Lab.</p>
-                <button @click="resetForm" class="btn btn-outline-primary">Kirim Pesan Lagi</button>
+                <h3>{{ t('contact.successTitle') }} 🎉</h3>
+                <p>{{ t('contact.successDesc') }}</p>
+                <button @click="resetForm" class="btn btn-outline-primary">{{ t('contact.submitBtn') }}</button>
               </div>
             </Transition>
           </div>
@@ -186,34 +186,29 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import {
   ChevronRightIcon, UserIcon, MailIcon, BuildingIcon, PhoneIcon,
   LayoutGridIcon, SendIcon, CheckCircleIcon, Loader2Icon, ClockIcon,
   ExternalLinkIcon, LinkedinIcon, TwitterIcon, InstagramIcon
 } from 'lucide-vue-next'
+import { useI18n } from '@/composables/useI18n'
+
+const { t } = useI18n()
 
 const form = reactive({ name: '', email: '', company: '', phone: '', service: '', budget: '', message: '' })
 const errors = reactive({})
 const isSubmitting = ref(false)
 const submitted = ref(false)
 
-const serviceOptions = [
-  'Konsultasi IT Strategis',
-  'Pengembangan Software Kustom',
-  'Integrasi Sistem',
-  'Cloud & DevOps',
-  'Aplikasi Mobile',
-  'Lainnya',
-]
+const serviceOptions = computed(() => t('contact.serviceOptions'))
+const budgetOptions = computed(() => t('contact.budgetOptions'))
 
-const budgetOptions = ['< Rp 50 Juta', 'Rp 50–200 Juta', 'Rp 200–500 Juta', '> Rp 500 Juta']
-
-const contactMethods = [
+const contactMethods = computed(() => [
   { icon: MailIcon, label: 'Email', value: 'kolektixlab@gmail.com', href: 'mailto:kolektixlab@gmail.com', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
-  { icon: PhoneIcon, label: 'Telepon', value: '+62 21 5001 2345', href: 'tel:+62215001234', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
-  { icon: BuildingIcon, label: 'Kantor Pusat', value: 'Perumahan Diamond Valley Blok A2/1, Sawangan, Depok ', href: '#', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
-]
+  { icon: PhoneIcon, label: t('contact.labelPhone'), value: '+62 21 5001 2345', href: 'tel:+62215001234', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
+  { icon: BuildingIcon, label: t('contact.labelCompany'), value: 'Diamond Valley Blok A2/1, Sawangan, Depok', href: '#', bg: 'rgba(0, 80, 209, 0.08)', color: '#0050D1' },
+])
 
 const socials = [
   { name: 'LinkedIn', href: 'https://linkedin.com', icon: LinkedinIcon },
@@ -223,11 +218,11 @@ const socials = [
 
 function validate() {
   Object.keys(errors).forEach(k => delete errors[k])
-  if (!form.name.trim()) errors.name = 'Nama wajib diisi'
-  if (!form.email.trim()) errors.email = 'Email wajib diisi'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Format email tidak valid'
-  if (!form.service) errors.service = 'Pilih layanan yang diminati'
-  if (!form.message.trim()) errors.message = 'Pesan wajib diisi'
+  if (!form.name.trim()) errors.name = `${t('contact.labelName').replace(' *', '')} ${t('contact.errorRequired')}`
+  if (!form.email.trim()) errors.email = `${t('contact.labelEmail').replace(' *', '')} ${t('contact.errorRequired')}`
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = t('contact.errorEmail')
+  if (!form.service) errors.service = t('contact.errorService')
+  if (!form.message.trim()) errors.message = t('contact.errorMessage')
   return Object.keys(errors).length === 0
 }
 

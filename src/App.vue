@@ -32,7 +32,7 @@ import { useSidebar } from '@/composables/useSidebar'
 const { isCollapsed } = useSidebar()
 
 // Dynamic margin based on collapsed state
-const bodyMargin = computed(() => isCollapsed.value ? '58px' : '200px')
+const bodyMargin = computed(() => isCollapsed.value ? '64px' : '220px')
 </script>
 
 <style>

@@ -7,10 +7,10 @@
 /* ── CSS Variables ─────────────────────────────── */
 :root {
   /* Primary Colors */
-  --primary: #0050D1;
-  --primary-dark: #0050D1;
+  --primary: #194E9E;
+  --primary-dark: #194E9E;
   --primary-light: #f0f7ff;
-  --accent: #0050D1;
+  --accent: #194E9E;
   --accent-light: #e0f2fe;
 
   /* Neutrals */
@@ -25,7 +25,7 @@
   --border-dark: #D1D5DB;
 
   /* Gradients */
-  --gradient-primary: #0050D1;
+  --gradient-primary: #194E9E;
   --gradient-hero: #f0f7ff;
   --gradient-card: #ffffff;
 

@@ -4,13 +4,13 @@
       <div class="section-header">
         <div class="section-tag">
           <LayoutGridIcon :size="14" />
-          Layanan Kami
+          {{ t('services.tag') }}
         </div>
         <h2 class="section-title" id="services-title">
-          Solusi <span>End-to-End</span> untuk<br>Transformasi Digital Anda
+          <span>{{ t('services.title1') }}</span> {{ t('services.title2') }} {{ t('services.title3') }}<br>{{ t('services.title4') }}
         </h2>
         <p class="section-subtitle">
-          Dari strategi hingga eksekusi, kami menyediakan layanan IT komprehensif yang dirancang untuk mendorong pertumbuhan bisnis nyata dan terukur.
+          {{ t('services.subtitle') }}
         </p>
         <div class="divider"></div>
       </div>
@@ -33,7 +33,7 @@
             <!-- Badge -->
             <div v-if="service.featured" class="service-featured-badge">
               <StarIcon :size="12" />
-              Most Popular
+              {{ t('services.mostPopular') }}
             </div>
 
             <!-- Content -->
@@ -50,7 +50,7 @@
 
             <!-- Link -->
             <RouterLink to="/layanan" class="service-link" :id="`service-explore-${idx}`">
-              Selidiki Lebih Lanjut
+              {{ t('services.exploreMore') }}
               <ArrowRightIcon :size="16" />
             </RouterLink>
           </div>
@@ -59,9 +59,9 @@
 
       <!-- Bottom CTA -->
       <div class="services-cta">
-        <p>Tidak menemukan yang Anda cari? Kami menyesuaikan solusi dengan kebutuhan spesifik bisnis Anda.</p>
+        <p>{{ t('services.ctaText') }}</p>
         <RouterLink to="/kontak" class="btn btn-primary" id="services-custom-cta">
-          Diskusikan Kebutuhan Anda
+          {{ t('services.ctaBtn') }}
           <ArrowRightIcon :size="16" />
         </RouterLink>
       </div>
@@ -74,45 +74,27 @@ import {
   LayoutGridIcon, StarIcon, CheckIcon, ArrowRightIcon,
   CpuIcon, CodeIcon, GitMergeIcon, CloudIcon
 } from 'lucide-vue-next'
+import { computed } from 'vue'
+import { useI18n } from '@/composables/useI18n'
 
-const services = [
-  {
-    icon: CpuIcon,
-    iconBg: 'rgba(0, 80, 209, 0.08)',
-    iconColor: '#0050D1',
-    title: 'Konsultasi IT Strategis',
-    description: 'Kami membantu bisnis Anda merancang roadmap teknologi yang selaras dengan tujuan bisnis jangka panjang, mengidentifikasi peluang efisiensi, dan mengurangi risiko teknologi.',
-    features: ['IT Assessment & Audit', 'Technology Roadmap', 'Digital Transformation', 'IT Governance & Risk'],
-    featured: false,
-  },
-  {
-    icon: CodeIcon,
-    iconBg: 'rgba(0, 80, 209, 0.08)',
-    iconColor: '#0050D1',
-    title: 'Pengembangan Software Kustom',
-    description: 'Dari aplikasi web enterprise hingga mobile apps, kami membangun solusi software yang scalable, aman, dan sesuai dengan proses bisnis unik Anda.',
-    features: ['Web & Mobile Apps', 'API Development', 'Microservices Architecture', 'Legacy Modernization'],
-    featured: true,
-  },
-  {
-    icon: GitMergeIcon,
-    iconBg: 'rgba(0, 80, 209, 0.08)',
-    iconColor: '#0050D1',
-    title: 'Integrasi Sistem',
-    description: 'Kami menghubungkan sistem-sistem disparate Anda (ERP, CRM, HR, dll.) menjadi ekosistem digital yang terpadu, efisien, dan real-time.',
-    features: ['ERP & CRM Integration', 'API Gateway & ESB', 'Data Pipeline & ETL', 'Third-party Connectors'],
-    featured: false,
-  },
-  {
-    icon: CloudIcon,
-    iconBg: 'rgba(0, 80, 209, 0.08)',
-    iconColor: '#0050D1',
-    title: 'Cloud & DevOps',
-    description: 'Accelerate delivery dan kurangi downtime dengan adopsi cloud yang terencana, pipeline CI/CD otomatis, dan praktik DevOps terbaik.',
-    features: ['Cloud Migration', 'CI/CD Pipeline', 'Infrastructure as Code', 'Monitoring & Observability'],
-    featured: false,
-  },
-]
+const { t, locale } = useI18n()
+
+const iconMap = [CpuIcon, CodeIcon, GitMergeIcon, CloudIcon]
+const iconBg = 'rgba(0, 80, 209, 0.08)'
+const iconColor = '#0050D1'
+const featuredIndex = 1
+
+const services = computed(() =>
+  t('services.items').map((item, i) => ({
+    icon: iconMap[i],
+    iconBg,
+    iconColor,
+    featured: i === featuredIndex,
+    title: item.title,
+    description: item.description,
+    features: item.features,
+  }))
+)
 </script>
 
 <style scoped>

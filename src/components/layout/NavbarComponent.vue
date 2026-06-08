@@ -3,7 +3,7 @@
     <div class="container navbar-inner">
       <!-- Logo -->
       <RouterLink to="/" class="navbar-logo" @click="closeMobile">
-        <img src="/logo/blue kolektix lab.png" alt="Kolektix Lab" class="navbar-logo-img" />
+        <img src="/logo/blue.png" alt="Kolektix Lab" class="navbar-logo-img" />
       </RouterLink>
 
       <!-- Desktop Nav -->
@@ -93,7 +93,7 @@ function updateMobile() {
 
 const navbarRight = computed(() => {
   if (isMobile.value) return '0px'
-  return isCollapsed.value ? '58px' : '200px'
+  return isCollapsed.value ? '64px' : '220px'
 })
 
 const isScrolled = ref(false)
@@ -159,7 +159,7 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   /* right is set dynamically via :style binding */
-  right: 200px;
+  right: 220px;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(16px);
