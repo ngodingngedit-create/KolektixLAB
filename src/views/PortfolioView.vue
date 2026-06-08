@@ -2,9 +2,7 @@
   <div class="portfolio-page" style="padding-top: 90px;">
     <!-- Hero -->
     <section class="page-hero">
-      <div class="page-hero-bg"><div class="page-hero-grid"></div></div>
       <div class="container page-hero-inner">
-       
         <h1 class="page-hero-title">
           Portfolio & <span class="text-gradient">Studi Kasus</span>
         </h1>
@@ -12,7 +10,7 @@
           Setiap proyek adalah cerita sukses kolaborasi. Temukan bagaimana kami membantu klien dari berbagai industri mencapai tujuan digitalnya.
         </p>
         <!-- Filter Tabs -->
-        <div class="portfolio-filters">
+        <div class="portfolio-filters" role="tablist" aria-label="Filter Portfolio">
           <button
             v-for="filter in filters"
             :key="filter.id"
@@ -20,6 +18,8 @@
             :class="{ active: activeFilter === filter.id }"
             @click="activeFilter = filter.id"
             :id="`filter-${filter.id}`"
+            role="tab"
+            :aria-selected="activeFilter === filter.id"
           >
             {{ filter.label }}
           </button>
@@ -39,20 +39,7 @@
               :class="{ featured: project.featured }"
             >
               <div class="pc-visual">
-                <div class="pc-mockup" :style="{ background: project.gradient }">
-                  <div class="pc-dots"><span></span><span></span><span></span></div>
-                  <div class="pc-content">
-                    <div class="pc-lines">
-                      <div class="pc-line long"></div>
-                      <div class="pc-line medium"></div>
-                    </div>
-                    <div class="pc-blocks">
-                      <div class="pc-block"></div>
-                      <div class="pc-block small"></div>
-                      <div class="pc-block"></div>
-                    </div>
-                  </div>
-                </div>
+                <img :src="project.image" :alt="project.title" class="pc-project-img" />
                 <div class="pc-overlay-icon">
                   <component :is="project.icon" :size="22" />
                 </div>
@@ -73,10 +60,10 @@
                 <div class="pc-tech">
                   <span v-for="tech in project.tech" :key="tech" class="pc-tech-tag">{{ tech }}</span>
                 </div>
-                <a href="#" class="pc-link">
+                <!-- <a href="#" class="pc-link">
                   Lihat Detail Proyek
                   <ArrowRightIcon :size="14" />
-                </a>
+                </a> -->
               </div>
             </article>
           </div>
@@ -117,6 +104,7 @@ const projects = [
     featured: true,
     icon: TrendingUpIcon,
     gradient: '#0050D1',
+    image: '/portfolio/investra.png',
     industry: 'Fintech & Investasi',
     year: '2024',
     title: 'Platform Manajemen Investasi — Investra',
@@ -129,6 +117,7 @@ const projects = [
     featured: false,
     icon: TruckIcon,
     gradient: '#0050D1',
+    image: '/portfolio/logistiqo.png',
     industry: 'Logistik',
     year: '2023',
     title: 'Sistem Logistik Real-Time — LogistiQo',
@@ -141,6 +130,7 @@ const projects = [
     featured: false,
     icon: ShoppingCartIcon,
     gradient: '#0050D1',
+    image: '/portfolio/retailmax.png',
     industry: 'E-Commerce',
     year: '2023',
     title: 'Transformasi Omnichannel — RetailMax',
@@ -153,6 +143,7 @@ const projects = [
     featured: false,
     icon: BuildingIcon,
     gradient: '#0050D1',
+    image: '/portfolio/banknusa.png',
     industry: 'Perbankan',
     year: '2022',
     title: 'Modernisasi Core Banking — BankNusa',
@@ -165,6 +156,7 @@ const projects = [
     featured: false,
     icon: HeartIcon,
     gradient: '#0050D1',
+    image: '/portfolio/mediconnect.png',
     industry: 'Healthcare',
     year: '2024',
     title: 'Sistem Manajemen Rumah Sakit — MediConnect',
@@ -177,6 +169,7 @@ const projects = [
     featured: false,
     icon: GraduationCapIcon,
     gradient: '#0050D1',
+    image: '/portfolio/eduprime.png',
     industry: 'EdTech',
     year: '2023',
     title: 'Platform E-Learning — EduPrime',
@@ -195,30 +188,38 @@ const filteredProjects = computed(() =>
 
 <style scoped>
 .page-hero {
-  position: relative; padding: 50px 0 40px;
-  background: #0050D1; overflow: hidden;
+  position: relative;
+  padding: 40px 0 32px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
 }
 
-.page-hero-bg { position: absolute; inset: 0; }
-.page-hero-grid {
-  position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
+.page-hero-inner {
+  position: relative;
+  z-index: 1;
 }
-
-.page-hero-inner { position: relative; z-index: 1; }
-
-
 
 .page-hero-title {
-  font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900;
-  color: white; margin-bottom: 20px; letter-spacing: -0.03em;
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 14px;
+  letter-spacing: -0.025em;
 }
-.page-hero-desc { color: rgba(255,255,255,0.7); font-size: 1.1rem; max-width: 600px; line-height: 1.75; margin-bottom: 32px; }
+
+.page-hero-desc {
+  color: var(--text-body);
+  font-size: 1.05rem;
+  max-width: 650px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
 
 /* ── Filters ── */
 .portfolio-filters {
-  display: flex; gap: 8px; flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .filter-btn {
@@ -226,22 +227,26 @@ const filteredProjects = computed(() =>
   border-radius: var(--radius-full);
   font-size: 0.875rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.7);
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-muted);
+  background: var(--white);
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: all var(--transition-base);
 }
 
 .filter-btn:hover {
-  background: rgba(255,255,255,0.15);
-  color: white;
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: var(--shadow-md);
 }
 
 .filter-btn.active {
-  background: var(--white);
-  color: var(--primary);
-  border-color: var(--white);
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(0, 86, 179, 0.28);
 }
 
 /* ── Portfolio Grid ── */
@@ -272,27 +277,17 @@ const filteredProjects = computed(() =>
 .pc-visual { position: relative; height: 180px; overflow: hidden; }
 .portfolio-card.featured .pc-visual { height: 220px; }
 
-.pc-mockup {
-  width: 100%; height: 100%;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.pc-project-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-base);
 }
 
-.pc-dots { display: flex; gap: 5px; }
-.pc-dots span { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.3); }
-.pc-dots span:first-child { background: rgba(255,255,255,0.6); }
-
-.pc-content { display: flex; gap: 12px; flex: 1; }
-.pc-lines { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-.pc-line { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.12); }
-.pc-line.long { width: 80%; }
-.pc-line.medium { width: 55%; }
-
-.pc-blocks { display: flex; flex-direction: column; gap: 6px; }
-.pc-block { width: 60px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.1); }
-.pc-block.small { width: 40px; height: 20px; }
+.portfolio-card:hover .pc-project-img {
+  transform: scale(1.05);
+}
 
 .pc-overlay-icon {
   position: absolute; bottom: 14px; right: 14px;
@@ -342,7 +337,22 @@ const filteredProjects = computed(() =>
 }
 
 @media (max-width: 640px) {
-  .portfolio-grid { grid-template-columns: 1fr; }
-  .portfolio-card.featured { grid-column: span 1; }
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .portfolio-card.featured {
+    grid-column: span 1;
+  }
+  .pc-body {
+    padding: 16px;
+  }
+  .pc-metrics {
+    gap: 12px;
+    padding: 10px 0;
+  }
+  .pcm-val {
+    font-size: 0.95rem;
+  }
 }
 </style>
